@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickBazaar - Market Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+        .receipt {
+            font-family: monospace;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+<div class="flex h-screen">
+
+    <!-- Sidebar -->
+    <div class="w-72 bg-emerald-800 text-white p-5 flex flex-col">
+        <div class="flex items-center gap-3 mb-10">
+            <i class="fa-solid fa-store text-4xl"></i>
+            <div>
+                <h1 class="text-2xl font-bold">QuickBazaar</h1>
+                <p class="text-emerald-200 text-sm">Market Management</p>
+            </div>
+        </div>
+        
+        <nav class="space-y-2">
+            <a href="#" onclick="showPage('dashboard')" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-emerald-700">
+                <i class="fa-solid fa-gauge"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" onclick="showPage('pos')" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-emerald-700">
+                <i class="fa-solid fa-cash-register"></i>
+                <span>POS / Billing</span>
+            </a>
+            <a href="#" onclick="showPage('products')" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-emerald-700">
+                <i class="fa-solid fa-boxes-stacked"></i>
+                <span>Products</span>
+            </a>
+            <a href="#" onclick="showPage('sales')" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-emerald-700">
+                <i class="fa-solid fa-receipt"></i>
+                <span>All Sales</span>
+            </a>
+            <a href="#" onclick="showPage('staff')" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-emerald-700">
+                <i class="fa-solid fa-users"></i>
+                <span>Staff</span>
+            </a>
+        </nav>
+
+        <div class="mt-auto pt-6 border-t border-emerald-700">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center text-xl">
+                    👨‍💼
+                </div>
+                <div>
+                    <p class="font-medium">Ahmed Ali</p>
+                    <p class="text-xs text-emerald-300">Manager</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 overflow-auto">
+
+        <!-- Dashboard -->
+        <div id="dashboard" class="page p-8">
+            <h1 class="text-3xl font-bold mb-8">Welcome to QuickBazaar</h1>
+            
+            <div class="grid grid-cols-4 gap-6">
+                <div class="bg-white rounded-2xl p-6 shadow">
+                    <p class="text-gray-500">Today's Sales</p>
+                    <p class="text-4xl font-bold text-emerald-600 mt-2">₹24,850</p>
+                    <p class="text-green-500 text-sm mt-2">↑ 12% from yesterday</p>
+                </div>
+                <div class="bg-white rounded-2xl p-6 shadow">
+                    <p class="text-gray-500">Total Products</p>
+                    <p id="totalProducts" class="text-4xl font-bold mt-2">48</p>
+                </div>
+                <div class="bg-white rounded-2xl p-6 shadow">
+                    <p class="text-gray-500">Today's Bills</p>
+                    <p id="totalBills" class="text-4xl font-bold mt-2">23</p>
+                </div>
+                <div class="bg-white rounded-2xl p-6 shadow">
+                    <p class="text-gray-500">Staff on Duty</p>
+                    <p class="text-4xl font-bold mt-2">4</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- POS Page -->
+        <div id="pos" class="page hidden p-8">
+            <h1 class="text-3xl font-bold mb-6">New Sale / Billing</h1>
+            
+            <div class="grid grid-cols-12 gap-6">
+                <!-- Products -->
+                <div class="col-span-7 bg-white rounded-2xl p-6 shadow">
+                    <input type="text" id="searchProduct" 
+                           placeholder="Search products..." 
+                           onkeyup="searchProducts()"
+                           class="w-full p-4 border rounded-xl mb-6 focus:outline-none focus:border-emerald-500">
+                    
+                    <div id="productsGrid" class="grid grid-cols-3 gap-4 max-h-[500px] overflow-auto">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Cart -->
+                <div class="col-span-5 bg-white rounded-2xl p-6 shadow flex flex-col">
+                    <h2 class="text-xl font-semibold mb-4">Cart</h2>
+                    <div id="cartItems" class="flex-1 overflow-auto space-y-3"></div>
+                    
+                    <div class="border-t pt-4 mt-auto">
+                        <div class="flex justify-between text-lg font-semibold">
+                            <span>Total Amount:</span>
+                            <span id="totalAmount">₹0</span>
+                        </div>
+                        
+                        <button onclick="completeSale()" 
+                                class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-4 rounded-2xl mt-6 text-lg font-semibold">
+                            Complete Sale & Print Bill
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products Page -->
+        <div id="products" class="page hidden p-8">
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-3xl font-bold">Products</h1>
+                <button onclick="showAddProductModal()" 
+                        class="bg-emerald-600 text-white px-6 py-3 rounded-xl flex items-center gap-2">
+                    <i class="fa-solid fa-plus"></i> Add New Product
+                </button>
+            </div>
+            
+            <div id="productsTable" class="bg-white rounded-2xl shadow overflow-hidden">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+
+        <!-- All Sales -->
+        <div id="sales" class="page hidden p-8">
+            <h1 class="text-3xl font-bold mb-6">All Sales History</h1>
+            <div id="salesTable" class="bg-white rounded-2xl shadow overflow-hidden">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+
+        <!-- Staff -->
+        <div id="staff" class="page hidden p-8">
+            <h1 class="text-3xl font-bold mb-6">Staff Management</h1>
+            <div class="bg-white rounded-2xl p-6">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b">
+                            <th class="text-left py-4">Name</th>
+                            <th class="text-left py-4">Role</th>
+                            <th class="text-left py-4">Today's Sales</th>
+                            <th class="text-left py-4">Total Sales</th>
+                        </tr>
+                    </thead>
+                    <tbody id="staffTable">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Receipt Modal -->
+<div id="receiptModal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+    <div class="bg-white receipt w-[380px] p-8 rounded-2xl" id="receiptContent">
+        <!-- JS populated -->
+    </div>
+</div>
+
+<!-- Add Product Modal -->
+<div id="addProductModal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+    <div class="bg-white w-[420px] rounded-2xl p-8">
+        <h2 class="text-2xl font-bold mb-6">Add New Product</h2>
+        
+        <input type="text" id="newProductName" placeholder="Product Name" class="w-full p-4 border rounded-xl mb-4">
+        <input type="number" id="newProductPrice" placeholder="Price (₹)" class="w-full p-4 border rounded-xl mb-4">
+        <input type="number" id="newProductStock" placeholder="Stock Quantity" value="100" class="w-full p-4 border rounded-xl mb-6">
+        
+        <div class="flex gap-3">
+            <button onclick="hideAddProductModal()" 
+                    class="flex-1 py-4 border rounded-xl">Cancel</button>
+            <button onclick="addNewProduct()" 
+                    class="flex-1 py-4 bg-emerald-600 text-white rounded-xl">Add Product</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// Sample Data
+let products = [
+    {id: 1, name: "Milk 1 Liter", price: 65, stock: 120},
+    {id: 2, name: "Eggs (12 Pack)", price: 85, stock: 45},
+    {id: 3, name: "Rice 5 Kg", price: 320, stock: 28},
+    {id: 4, name: "Flour 10 Kg", price: 480, stock: 35},
+    {id: 5, name: "Sugar 1 Kg", price: 95, stock: 67},
+    {id: 6, name: "Cooking Oil 1 Liter", price: 185, stock: 50},
+];
+
+let sales = [];
+let staff = [
+    {name: "Ahmed Ali", role: "Manager", todaySales: 12450, totalSales: 458000},
+    {name: "Saeed Khan", role: "Salesman", todaySales: 8750, totalSales: 234000},
+    {name: "Farhan", role: "Helper", todaySales: 3200, totalSales: 89000},
+];
+
+let cart = [];
+
+// Render Products in POS
+function renderProducts() {
+    const grid = document.getElementById('productsGrid');
+    grid.innerHTML = '';
+    
+    products.forEach(product => {
+        const div = document.createElement('div');
+        div.className = "bg-gray-50 border border-gray-200 hover:border-emerald-400 rounded-2xl p-4 cursor-pointer transition";
+        div.innerHTML = `
+            <p class="font-semibold">${product.name}</p>
+            <p class="text-emerald-600 font-bold text-2xl mt-2">₹${product.price}</p>
+            <p class="text-xs text-gray-500">Stock: ${product.stock}</p>
+        `;
+        div.onclick = () => addToCart(product);
+        grid.appendChild(div);
+    });
+}
+
+function renderProductsTable() {
+    let html = `
+        <table class="w-full">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="text-left p-4">Product Name</th>
+                    <th class="text-left p-4">Price</th>
+                    <th class="text-left p-4">Stock</th>
+                    <th class="text-left p-4">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+    
+    products.forEach((product, index) => {
+        html += `
+            <tr class="border-t hover:bg-gray-50">
+                <td class="p-4">${product.name}</td>
+                <td class="p-4 font-bold">₹${product.price}</td>
+                <td class="p-4">${product.stock}</td>
+                <td class="p-4">
+                    <button onclick="deleteProduct(${index})" class="text-red-500 hover:text-red-700">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+    });
+    
+    html += '</tbody></table>';
+    document.getElementById('productsTable').innerHTML = html;
+}
+
+function renderSalesTable() {
+    let html = `
+        <table class="w-full">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="text-left p-4">Date</th>
+                    <th class="text-left p-4">Bill No</th>
+                    <th class="text-left p-4">Total Amount</th>
+                    <th class="text-left p-4">Staff</th>
+                    <th class="text-left p-4">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+    
+    sales.slice().reverse().forEach((sale, idx) => {
+        html += `
+            <tr class="border-t hover:bg-gray-50">
+                <td class="p-4">${sale.date}</td>
+                <td class="p-4">${sale.billNo}</td>
+                <td class="p-4 font-bold">₹${sale.total}</td>
+                <td class="p-4">${sale.staff}</td>
+                <td class="p-4">
+                    <button onclick="viewReceipt(${sales.indexOf(sale)})" class="text-blue-600">
+                        <i class="fa-solid fa-eye"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+    });
+    
+    html += '</tbody></table>';
+    document.getElementById('salesTable').innerHTML = html;
+}
+
+function renderStaff() {
+    let html = '';
+    staff.forEach(s => {
+        html += `
+            <tr class="border-t">
+                <td class="p-4">${s.name}</td>
+                <td class="p-4">${s.role}</td>
+                <td class="p-4 font-semibold text-emerald-600">₹${s.todaySales}</td>
+                <td class="p-4">₹${s.totalSales}</td>
+            </tr>
+        `;
+    });
+    document.getElementById('staffTable').innerHTML = html;
+}
+
+// Cart Functions
+function addToCart(product) {
+    const existing = cart.find(item => item.id === product.id);
+    if (existing) {
+        existing.qty += 1;
+    } else {
+        cart.push({...product, qty: 1});
+    }
+    renderCart();
+}
+
+function renderCart() {
+    const container = document.getElementById('cartItems');
+    container.innerHTML = '';
+    
+    let total = 0;
+    
+    cart.forEach((item, index) => {
+        const itemTotal = item.price * item.qty;
+        total += itemTotal;
+        
+        const div = document.createElement('div');
+        div.className = "flex justify-between items-center bg-gray-50 p-4 rounded-xl";
+        div.innerHTML = `
+            <div>
+                <p class="font-medium">${item.name}</p>
+                <p class="text-sm text-gray-500">₹${item.price} × ${item.qty}</p>
+            </div>
+            <div class="text-right">
+                <p class="font-bold">₹${itemTotal}</p>
+                <button onclick="removeFromCart(${index})" class="text-red-500 text-sm mt-1">Remove</button>
+            </div>
+        `;
+        container.appendChild(div);
+    });
+    
+    document.getElementById('totalAmount').textContent = `₹${total}`;
+}
+
+function removeFromCart(index) {
+    cart.splice(index, 1);
+    renderCart();
+}
+
+// Complete Sale
+function completeSale() {
+    if (cart.length === 0) return alert("Cart is empty!");
+    
+    const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+    const billNo = "QB" + Math.floor(100000 + Math.random() * 900000);
+    const date = new Date().toLocaleDateString('en-IN');
+    
+    const sale = {
+        billNo: billNo,
+        date: date,
+        total: total,
+        staff: "Ahmed Ali",
+        items: [...cart]
+    };
+    
+    sales.push(sale);
+    showReceipt(sale);
+    
+    cart = [];
+    renderCart();
+    
+    document.getElementById('totalBills').textContent = sales.length;
+}
+
+// Show Receipt
+function showReceipt(sale) {
+    const modal = document.getElementById('receiptModal');
+    const content = document.getElementById('receiptContent');
+    
+    let itemsHTML = '';
+    sale.items.forEach(item => {
+        itemsHTML += `
+            <div class="flex justify-between text-sm py-1">
+                <span>${item.name} × ${item.qty}</span>
+                <span>₹${item.price * item.qty}</span>
+            </div>
+        `;
+    });
+    
+    content.innerHTML = `
+        <div class="text-center border-b pb-6 mb-6">
+            <h2 class="text-2xl font-bold">QuickBazaar</h2>
+            <p class="text-sm">Market Shop</p>
+            <p class="text-xs text-gray-500 mt-1">Bill No: ${sale.billNo}</p>
+        </div>
+        
+        <div class="mb-6">
+            ${itemsHTML}
+        </div>
+        
+        <div class="border-t border-b py-4 mb-6">
+            <div class="flex justify-between font-bold text-lg">
+                <span>Total Amount:</span>
+                <span>₹${sale.total}</span>
+            </div>
+        </div>
+        
+        <div class="text-center text-xs text-gray-500">
+            <p>Thank You! Visit Again</p>
+            <p class="mt-4">${sale.date} • Staff: ${sale.staff}</p>
+        </div>
+        
+        <button onclick="printReceipt()" 
+                class="mt-8 w-full bg-black text-white py-4 rounded-xl font-semibold">
+            Print Bill
+        </button>
+    `;
+    
+    modal.classList.remove('hidden');
+}
+
+function printReceipt() {
+    window.print();
+    document.getElementById('receiptModal').classList.add('hidden');
+}
+
+function viewReceipt(index) {
+    showReceipt(sales[index]);
+}
+
+// Modal Functions
+function showAddProductModal() {
+    document.getElementById('addProductModal').classList.remove('hidden');
+}
+
+function hideAddProductModal() {
+    document.getElementById('addProductModal').classList.add('hidden');
+}
+
+function addNewProduct() {
+    const name = document.getElementById('newProductName').value;
+    const price = parseInt(document.getElementById('newProductPrice').value);
+    const stock = parseInt(document.getElementById('newProductStock').value);
+    
+    if (!name || !price) {
+        alert("Please enter product name and price");
+        return;
+    }
+    
+    products.push({
+        id: Date.now(),
+        name: name,
+        price: price,
+        stock: stock || 50
+    });
+    
+    hideAddProductModal();
+    renderProducts();
+    renderProductsTable();
+}
+
+function searchProducts() {
+    const term = document.getElementById('searchProduct').value.toLowerCase();
+    const filtered = products.filter(p => p.name.toLowerCase().includes(term));
+    
+    const grid = document.getElementById('productsGrid');
+    grid.innerHTML = '';
+    
+    filtered.forEach(product => {
+        const div = document.createElement('div');
+        div.className = "bg-gray-50 border border-gray-200 hover:border-emerald-400 rounded-2xl p-4 cursor-pointer transition";
+        div.innerHTML = `
+            <p class="font-semibold">${product.name}</p>
+            <p class="text-emerald-600 font-bold text-2xl mt-2">₹${product.price}</p>
+            <p class="text-xs text-gray-500">Stock: ${product.stock}</p>
+        `;
+        div.onclick = () => addToCart(product);
+        grid.appendChild(div);
+    });
+}
+
+function deleteProduct(index) {
+    if (confirm("Are you sure you want to delete this product?")) {
+        products.splice(index, 1);
+        renderProductsTable();
+        renderProducts();
+    }
+}
+
+function showPage(page) {
+    document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+    document.getElementById(page).classList.remove('hidden');
+    
+    if (page === 'products') renderProductsTable();
+    if (page === 'sales') renderSalesTable();
+}
+
+function init() {
+    renderProducts();
+    renderProductsTable();
+    renderSalesTable();
+    renderStaff();
+    showPage('dashboard');
+}
+
+window.onload = init;
+</script>
+
+</body>
+</html>
+</body>
+</html>
